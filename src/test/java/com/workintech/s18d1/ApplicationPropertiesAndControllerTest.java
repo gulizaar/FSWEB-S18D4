@@ -58,7 +58,7 @@ class ApplicationPropertiesAndControllerTest {
         sampleBurger.setId(1L);
         sampleBurger.setName("Classic Burger");
         sampleBurger.setPrice(7.99);
-        sampleBurger.setIsVegan(false);
+        sampleBurger.setVegan(false);
         sampleBurger.setBreadType(BreadType.BURGER);
         sampleBurger.setContents("Beef, Lettuce, Tomato, Cheese");
     }
@@ -191,9 +191,13 @@ class ApplicationPropertiesAndControllerTest {
     @DisplayName("Find by price test")
     void testFindByPrice() throws Exception {
         List<Burger> burgers = Arrays.asList(sampleBurger);
-        given(burgerDao.findByPrice(sampleBurger.getPrice().intValue())).willReturn(burgers);
 
-        mockMvc.perform(get("/burger/price/{price}", sampleBurger.getPrice().intValue()))
+        given(burgerDao.findByPrice((int) sampleBurger.getPrice()))
+                .willReturn(burgers);
+
+        mockMvc.perform(
+                        get("/burger/price/{price}", (int) sampleBurger.getPrice())
+                )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].name", is(sampleBurger.getName())));
